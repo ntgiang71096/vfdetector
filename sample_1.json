@@ -1,0 +1,16 @@
+[
+	{	
+		"id": "sample_1",
+		"message": "Prevent memory leak in decoding PNG images. PiperOrigin-RevId: 409300653 Change-Id: I6182124c545989cef80cefd439b659095920763b", 
+		"issue": "right after install TensorFlowLiteObjC , by pod install, cause error in Xcode",
+		"patch": ["@@ -78,11 +78,24 @@ class SparseDenseBinaryOpShared : public OpKernel {\n                     \"but received shapes: \",\n                     values_t->shape().DebugString(), \" and \",\n                     shape_t->shape().DebugString()));\n+    OP_REQUIRES(\n+        ctx, TensorShapeUtils::IsVector(shape_t->shape()),\n+        errors::InvalidArgument(\"Input sp_shape must be a vector. Got: \",\n+                                shape_t->shape().DebugString()));\n     OP_REQUIRES(\n         ctx, values_t->dim_size(0) == indices_t->dim_size(0),\n         errors::InvalidArgument(\n             \"The first dimension of values and indices should match. (\",\n             values_t->dim_size(0), \" vs. \", indices_t->dim_size(0), \")\"));\n+    OP_REQUIRES(\n+        ctx, shape_t->shape().dim_size(0) == indices_t->shape().dim_size(1),\n+        errors::InvalidArgument(\n+            \"Number of dimensions must match second dimension of indices. \",\n+            \"Got \", shape_t->shape().dim_size(0),\n+            \" dimensions, indices shape: \", indices_t->shape().DebugString()));\n+    OP_REQUIRES(ctx, shape_t->NumElements() > 0,\n+                errors::InvalidArgument(\n+                    \"The shape argument requires at least one element.\"));\n \n     const auto indices_mat = indices_t->matrix<int64_t>();\n     const auto shape_vec = shape_t->vec<int64_t>();\n"] 
+	},
+	{	
+		"id": "sample_3",
+		"message": "Refactor code", 
+		"patch": ["@@ -10,23 +15,28 @@ +                errors::InvalidArgument(\n+                    \"The shape argument requires at least one element.\"));"] 
+	}
+]	
+
+
+
