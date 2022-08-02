@@ -65,16 +65,6 @@ In the ranking mode, users can input data following our format and then VulCurat
 python application.py -mode ranking -input <path_to_input> -output <path_to_output>
 ```
 
-
-### Use Docker Image
-For ease of use, we provide a docker image that can be accessed in:
-https://hub.docker.com/repository/docker/ratnadira/vullinker
-We can run and pull the docker image using below command:
-
-```docker run --name=<docker_name> --gpus '"device=0,1"' --shm-size 32G -it -p 8000:8000 ratnadira/vullinker```
-
-Noted that we can change the gpus parameter based on the spec that what we have.
-
 ### Datasets:
 
 For TensorFlow dataset, please refer to: https://zenodo.org/record/6792205#.YsG03-xByw4
