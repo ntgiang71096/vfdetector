@@ -3,6 +3,8 @@ import os
 import pandas as pd
 from tqdm import tqdm
 import config
+# from variant_5_finetune import get_tensor_flow_data
+import variant_8_finetune_separate
 
 def line_empty(line):
     if line.strip() == '':
@@ -80,43 +82,44 @@ def get_sap_data(dataset_name):
     return url_train, url_test, label_train, label_test, url_to_label, url_to_pl
 
 
-def get_data(dataset_name):
-    if dataset_name == config.SAP_DATASET_NAME:
-        url_to_diff, url_to_partition, url_to_label, url_to_pl = get_sap_data(dataset_name)
-    else:
-        url_to_diff, url_to_partition, url_to_label, url_to_pl = get_tensor_flow_data(dataset_name)
-
-    patch_train, patch_test = [], []
-    label_train, label_test = [], []
-    url_train, url_test = [], []
-
-    for key in url_to_diff.keys():
-        url = key
-        diff = url_to_diff[key]
-        label = url_to_label[key]
-        partition = url_to_partition[key]
-        pl = url_to_pl[key]
-        if partition == 'train':
-            patch_train.append(diff)
-            label_train.append(label)
-            url_train.append(url)
-        elif partition == 'test':
-            patch_test.append(diff)
-            label_test.append(label)
-            url_test.append(url)
-
-    print("Finish reading dataset")
-    patch_data = {'train': patch_train, 'test': patch_test}
-
-    label_data = {'train': label_train, 'test': label_test}
-
-    url_data = {'train': url_train, 'test': url_test}
-
-    return patch_data, label_data, url_data
-
 def get_tensor_flow_data(dataset_name):
+    # print("Reading dataset...")
+    # df = pd.read_csv(dataset_name)
+    # df[['commit_id', 'repo', 'msg', 'filename', 'diff', 'label', 'partition']]
+    # items = df.to_numpy().tolist()
 
-    patch_data, label_data, url_data = get_data(dataset_name)
+    # url_train, url_test = [], []
+    # label_train, label_test = [], []
+    # url_to_pl = {}
+    # url_to_label = {}
+    # for item in tqdm(items):
+    #     commit_id = item[0]
+    #     repo = item[1]
+    #     url = repo + '/commit/' + commit_id
+    #     partition = item[6]
+    #     pl = 'UNKNOWN'
+    #     label = item[5]
+    #     diff = item[4]
+
+    #     if pd.isnull(diff):   
+    #         continue
+
+    #     url_to_pl[url] = pl
+    #     url_to_label[url] = label
+    #     if partition == 'train':
+    #         if url not in url_train:
+    #             url_train.append(url)
+    #             label_train.append(label)
+    #     elif partition == 'test':
+    #         if url not in url_test:
+    #             url_test.append(url)
+    #             label_test.append(label)
+    #     else:
+    #         Exception("Invalid partition: {}".format(partition))
+
+    # print("Finish reading dataset")
+
+    patch_data, label_data, url_data = variant_8_finetune_separate.get_data(dataset_name)
 
     url_train, url_test, label_train, label_test, url_to_label, url_to_pl = url_data['train'], url_data['test'], label_data['train'], label_data['test'], {}, {}
 
@@ -129,6 +132,9 @@ def get_data(dataset_name, need_pl=False):
         return get_data_from_saved_file(file_info_name, need_pl)
 
     if dataset_name == config.SAP_DATASET_NAME:
+        print("load sap dataset...")
+        # Need to read csv version instead
+        dataset_name = 'sap_patch_dataset.csv'
         url_train, url_test, label_train, label_test, url_to_label, url_to_pl = get_sap_data(dataset_name)
 
     else:

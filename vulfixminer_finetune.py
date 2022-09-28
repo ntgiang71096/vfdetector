@@ -249,7 +249,7 @@ def get_tensor_flow_data(dataset_name):
 
 def get_data(dataset_name):
 
-    if dataset_name == config.SAP_DATASET_NAME:
+    if dataset_name == 'sap_patch_dataset.csv':
         url_to_diff, url_to_partition, url_to_label, url_to_pl = get_sap_data(dataset_name)
     else:
         url_to_diff, url_to_partition, url_to_label, url_to_pl = get_tensor_flow_data(dataset_name) 

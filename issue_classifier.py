@@ -59,11 +59,11 @@ test_params = {'batch_size': 64,
 false_cases = []
 
 
-def read_sap_issue(dataset_name, need_urls=False):
+def read_sap_issue(dataset_name='sub_enhanced_dataset_th_100.txt', need_urls=False):
     issues, labels, urls =  [], [], []
     url_to_issue = {}
 
-    records = data_loader.load_records(dataset_name)
+    records = data_loader.load_records('sub_enhanced_dataset_th_100.txt')
     options = ExperimentOption()
 
     print("Preprocessing records...")

@@ -108,7 +108,7 @@ def read_message(file_path, is_pos):
     return message_list
 
 def read_sap_dataset(need_urls=False):
-    records = data_loader.load_records(dataset_name)
+    records = data_loader.load_records('sub_enhanced_dataset_th_100.txt')
     messages = []
     labels = []
     urls = []
@@ -139,7 +139,7 @@ def read_tensor_flow_dataset(dataset_name, need_url_data=False):
 
     df = df[['commit_id', 'repo', 'msg', 'filename', 'diff', 'label', 'partition']]
 
-    patch_data, label_data, url_data = utils.get_data(dataset_name)
+    url_data, label_data = utils.get_data(dataset_name)
 
     items = df.to_numpy().tolist()
 
