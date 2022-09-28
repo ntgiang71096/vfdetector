@@ -93,7 +93,10 @@ Please follow our examples "tf_dataset.conf" or "sap_dataset.conf" for more deta
 
 ### Replicate our result:
 
-Please follow our instructions to replicate our experimental results:
+Before, please download SAP dataset: https://drive.google.com/file/d/1NyCnXGD4VyVDZ2TMhqv4bDqYl14HDRUD/view?usp=sharing
+and put it in working directory
+
+Next, please follow our instructions to replicate our experimental results:
 
 For Tensorflow dataset:
 
