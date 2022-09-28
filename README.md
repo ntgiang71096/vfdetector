@@ -90,3 +90,44 @@ Ensemble Classifier:
 ```python variant_ensemble.py --config_file <path_to_config>```
 
 Please follow our examples "tf_dataset.conf" or "sap_dataset.conf" for more details
+
+### Replicate our result:
+
+Please follow our instructions to replicate our experimental results:
+
+For Tensorflow dataset:
+
+To train message classifier:
+```python message_classifier.py --dataset_path tf_vuln_dataset.csv --model_path model/tf_message_classifier.sav```
+
+To train issue classifier
+```python issue_classifier.py --dataset_path tf_vuln_dataset.csv --model_path model/tf_issue_classifier.sav```
+
+To finetune CodeBERT for patch classifier:
+```python vulfixminer_finetune.py --dataset_path tf_vuln_dataset.csv --finetune_model_path model/tf_patch_vulfixminer_finetuned_model.sav```
+
+To traing patch classifier:
+```python vulfixminer.py --dataset_path tf_vuln_dataset.csv --model_path model/tf_patch_vulfixminer.sav --finetune_model_path model/tf_patch_vulfixminer_finetuned_model.sav --train_prob_path probs/tf_patch_vulfixminer_train_prob.txt --test_prob_path probs/tf_patch_vulfixminer_test_prob.txt```
+
+To run ensemble classifier:
+```python variant_ensemble.py --config_file tf_dataset.conf```
+
+Similarly, for SAP dataset:
+
+To train message classifier:
+```python message_classifier.py --dataset_path sub_enhanced_dataset_th_100.txt --model_path model/sap_message_classifier.sav```
+
+To train issue classifier
+```python issue_classifier.py --dataset_path sub_enhanced_dataset_th_100.txt --model_path model/sap_issue_classifier.sav```
+
+To finetune CodeBERT for patch classifier:
+``python vulfixminer_finetune.py --dataset_path sap_patch_dataset.csv --finetune_model_path model/sap_patch_vulfixminer_finetuned_model.sav```
+
+To traing patch classifier:
+```python vulfixminer.py --dataset_path sap_patch_dataset.csv --model_path model/sap_patch_vulfixminer.sav --finetune_model_path model/sap_patch_vulfixminer_finetuned_model.sav --train_prob_path probs/sap_patch_vulfixminer_train_prob.txt --test_prob_path probs/sap_patch_vulfixminer_test_prob.txt```
+
+To run ensemble classifier:
+```python variant_ensemble.py --config_file sap_dataset.conf```
+
+
+
