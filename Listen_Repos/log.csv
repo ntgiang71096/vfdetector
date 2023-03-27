@@ -1,0 +1,341 @@
+2023-03-26 09:58:07,1dce1ddd62b4d9f7434bffa347defe0ad286bfab,"Propagate graph rewrite options from model server flags to tfrt SavedModel API.
+
+PiperOrigin-RevId: 519535644",non-vulnerability-fixing commit
+2023-03-24 02:53:06,41f443c9f138ee1c8038589fca156293f0a1ff03,"[xla:cpu:next] remove second inliner pass from HloXlaRuntimePipeline
+
+As far as I can tell it is not serving any purpose, and it is
+causing issues for the Sparse work due to the lack of a
+""noinline"" attribute for MLIR functions. Get rid of it.
+
+PiperOrigin-RevId: 519093836",non-vulnerability-fixing commit
+2023-03-24 02:57:57,dad0d43036e56b0ab538cc0a46514742c6c74857,"CheckTensorStaticOrPersistentRoAllocation returns true if a tensor's allocation type is kTfLiteMmapRo or kTfLitePersistentRo.
+
+This is used by reshape to determine if the new shape is known during delegation.
+
+This reduces the number of partitions in delegated graphs
+
+PiperOrigin-RevId: 519093996",non-vulnerability-fixing commit
+2023-03-24 05:17:23,9615158d0edb847c5f56ed33c403a4737a36a110,"Integrate LLVM at llvm/llvm-project@c5d22f4e1866
+
+Updates LLVM usage to match
+[c5d22f4e1866](https://github.com/llvm/llvm-project/commit/c5d22f4e1866)
+
+PiperOrigin-RevId: 519116721",non-vulnerability-fixing commit
+2023-03-24 06:56:05,f9923f86e1ceb765e1533ac76049f7f1f02f3dc4,"Merge pull request #59895 from tensorflow:gaikwadrahul8-lib_interpreter
+
+PiperOrigin-RevId: 519131540",non-vulnerability-fixing commit
+2023-03-24 07:06:45,9fe34302ecf79782fe3d0ae56a1237474526ed33,"Merge pull request #60025 from XPhyro:remove-redundant-static-asserts
+
+PiperOrigin-RevId: 519133469",non-vulnerability-fixing commit
+2023-03-24 07:11:47,baf6af76241a2f98f060a6bd457bb287b9eca2fe,"Merge pull request #57019 from Intel-tensorflow:othakkar/bf16_roundop_test
+
+PiperOrigin-RevId: 519133520",non-vulnerability-fixing commit
+2023-03-24 07:49:06,ac56abf2b9ad230293e0ced5399e86c0f84681eb,"Fix model paths.
+
+PiperOrigin-RevId: 519141160",non-vulnerability-fixing commit
+2023-03-24 07:56:39,2c23114af20c30788701461bebb2d5e9fd3e1610,"1. Cap ASBS's num_batch_threads parameter to be no larger than the actual
+   number of batch threads we have.  We are creating our own threadpool and
+   passing it to ASBS; you'd think that ASBS would then ignore the
+   num_batch_threads option, but in fact it still uses it as an indication of the
+   max number of in-flight requests that are allowed.  We also need to cap the
+   other in-flight parameters to be also no larger than num_batch_threads.
+
+2. Set lower defaults for these ASBS options -- models can always override them
+   but I think the current defaults are just too high.
+
+The current settings are:
+- actual threadpool size: 64 (or 4 in the second experiment)
+- max in-flight batches: 64
+- min in-flight batches: 16
+- initial in-flight batches: 16
+
+This is a lot more in-filght batches than we were getting with SBS where we had
+2-8 batch threads, and cutting the actual threadpool size to 4 failed to adjust
+things as we expected because of issue #1.
+
+Proposed defaults are
+- max in-flight batches: 64 (no change)
+- min in-flight batches: 1
+- initial in-flight batches: 2
+
+PiperOrigin-RevId: 519142730",non-vulnerability-fixing commit
+2023-03-24 08:02:09,96fec5595f49faeb85b4b497c286c783c7d2b27a,"Optimize and simplify float8 routines
+
+We would always round the result by kDigitShift digits but this rounded result might not be used if the result was subnormal.
+
+Instead, let's handle subnormal -> normal and normal -> subnormal first.
+
+Finally, let's also optimize sign handling and simplify management of formats which don't support negative 0 or can't flip the sign bit for NaN.
+
+PiperOrigin-RevId: 519143662",non-vulnerability-fixing commit
+2023-03-24 08:18:28,c81583ae645cbd6bbb62ffb5a01af5a40ff4158a,"Automated visibility attribute cleanup.
+
+PiperOrigin-RevId: 519147425",non-vulnerability-fixing commit
+2023-03-24 08:44:35,0595e773e2a2a6fb25694f026ba8d51e74cd5a42,"Merge release notes for the latest TF 2.12 final releases.
+
+PiperOrigin-RevId: 519152824",non-vulnerability-fixing commit
+2023-03-24 08:49:08,e5eadb92104a932dea4b8ff77143a6e999eb5bdc,"Add write_fingerprint error handling, unit test, __str__ and __repr__ methods to Fingerprint class.
+
+PiperOrigin-RevId: 519153300",non-vulnerability-fixing commit
+2023-03-24 08:53:56,7e23eb87d0e02b66ebdb759230f72bd0d1fee6f0,"[tf:aot] add matmul microbenchmarks
+
+These can be used to benchmark the AOT compiler, i.e. XLA.
+
+PiperOrigin-RevId: 519153414",non-vulnerability-fixing commit
+2023-03-24 09:00:46,99c036812fdf9bd5786cf5acaed427a925e95245,"Move usages of `python/util:util` to the newly split up targets.
+
+PiperOrigin-RevId: 519156187",non-vulnerability-fixing commit
+2023-03-24 09:05:50,15b54e90a10d87a5e401efd72d2aacb1d37cc32d,"[NFC] Extract code to replace async pairs with sync variants into a helper
+- This helper is intended to be used in other passes that do similar things
+
+PiperOrigin-RevId: 519156332",non-vulnerability-fixing commit
+2023-03-24 09:09:34,d906a62dfb6daf3b5842101e061786d93b56b5c6,"[XLA/GPU] Stop dumping ""noconst"" variants of LLVM IR
+- This was added as a readability tool when XLA/GPU used to generate
+  initializers for large constants in LLVM IR.
+- However, XLA/GPU has for a while changed how large constants are handled.
+  They are zero initialized in LLVM IR and then initialized at runtime with
+  their true value. So LLVM IR generated should not have large constants
+  with non-zero initializers that bloats the generated .ll files.
+
+PiperOrigin-RevId: 519156524",non-vulnerability-fixing commit
+2023-03-24 09:36:23,c4974222ae2e35809f805373bd067b0d0d1b2d95,"Add tf-xla-call-module-op-to-stablehlo-pass which replaces the tf.XlaCallModuleOp with a function call, the callee is the entry function in the stablehlo module. This passes also adds all functions in the stablehlo module to the parent module.
+
+PiperOrigin-RevId: 519164560",non-vulnerability-fixing commit
+2023-03-24 09:51:50,5cc95b9771811593f9850c7f5ae81d8fe2aee8ae,"Integrate LLVM at llvm/llvm-project@c640a146c4ca
+
+Updates LLVM usage to match
+[c640a146c4ca](https://github.com/llvm/llvm-project/commit/c640a146c4ca)
+
+PiperOrigin-RevId: 519167812",non-vulnerability-fixing commit
+2023-03-24 10:08:14,6073faead9acd26646cfb1121443ebb147bd3b15,"After the SPMD bug fix, always take the _rewriting_take route for getitem instead of bouncing to host.
+
+PiperOrigin-RevId: 519170785",non-vulnerability-fixing commit
+2023-03-24 10:12:41,bc0daf17b5019b368bb3d9a83ae462c8572bb6cc,"Remove add_to_graph in EagerDefinedFunction
+
+PiperOrigin-RevId: 519170992",non-vulnerability-fixing commit
+2023-03-24 10:16:04,d191eb3e92f7c982eda5d7f9af7354b7e63868fa,"Assume zeros shapes for statically proven to be zero gradients
+
+PiperOrigin-RevId: 519171208",non-vulnerability-fixing commit
+2023-03-24 10:25:32,94290627f1d0f572c7359d61e1b4c7568834c41a,"Add DeviceAttributes() to PjRtDeviceTopology.
+
+This function should return the per-device attributes for each device in the
+topology. This should be all that is necessary to construct compile-only
+devices for a topology. These should match the per-device attributes of the
+devices with attached hardware.
+
+PiperOrigin-RevId: 519176831",non-vulnerability-fixing commit
+2023-03-24 10:31:34,228bbe126b0b958cfbc1d34bfd3d726473d9ef7c,"Remove the temporary re-exports from tensor_conversion now that the usages of these symbols have been migrated to use tensor_conversion directly.
+
+PiperOrigin-RevId: 519178157",non-vulnerability-fixing commit
+2023-03-24 10:35:43,37013df6570153560eeeaa5fa643b513ac79b6d2,"Rename GetDelegateKernelRegistrationImpl as CreateDelegateKernelRegistrationImpl,
+since it creates a new object, and transfers ownership of that object to the caller,
+rather than returning an existing object.
+
+PiperOrigin-RevId: 519178538",non-vulnerability-fixing commit
+2023-03-24 10:39:20,984bba4f4d628aed3a7ae11cc9ede7fcde7dc0b5,"Add comment in lite/c/c_api.h pointing to lite/core/c/c_api.h for documentation.
+
+PiperOrigin-RevId: 519179958",non-vulnerability-fixing commit
+2023-03-24 10:56:33,4f0bbb2e3d71b1aa1e85614c667f3f0f21f34816,"Bypass Clang-16 NCCL incompatibility.
+
+PiperOrigin-RevId: 519185533",non-vulnerability-fixing commit
+2023-03-24 11:01:03,bd40681bd794785446a1a5a06aa37ce335664d32,"Delete deprecated functions. Migrate the last remaining references
+
+PiperOrigin-RevId: 519185625",non-vulnerability-fixing commit
+2023-03-24 11:05:38,2c5c778484883380226405007e6127818a6756ce,"Support `class_weight` for 3+ dimensional data in `model.fit`
+
+PiperOrigin-RevId: 519185840",non-vulnerability-fixing commit
+2023-03-24 11:09:02,e8910943ad0a600a0af322907c5ec2e8f86baf36,"Revert cl/518923548 and fix patch path instead.
+
+This is the better because Triton upstream will need to be fixed in the same way, at which point we can remove the patch again.
+
+PiperOrigin-RevId: 519186580",non-vulnerability-fixing commit
+2023-03-24 11:14:08,70c0920091d25fcb0eda3a239de90cbd227fb235,"validate types of input and outputs for XLA ops
+
+PiperOrigin-RevId: 519187917",non-vulnerability-fixing commit
+2023-03-24 11:17:57,86e0d74bb6a87020c1683629eb7d1dc73949377f,"Update FlatBuffers to v23.1.20.
+
+PiperOrigin-RevId: 519188918",non-vulnerability-fixing commit
+2023-03-24 11:40:32,a21f3adedb8de559a6daa6eb670349bb7d146eb0,"Merge pull request #59501 from ROCmSoftwarePlatform:rocm_multiclients
+
+PiperOrigin-RevId: 519197617",non-vulnerability-fixing commit
+2023-03-24 11:52:12,e0357d27f525b0a1a33f32f797bbdac420e2e913,"Create the other half the TFSAs for the TF 2.12 release
+
+PiperOrigin-RevId: 519199626",non-vulnerability-fixing commit
+2023-03-24 11:55:44,20140978463c4bc00b73552a6b528242f259ac62,"Create half the TFSAs for the TF 2.12 release
+
+PiperOrigin-RevId: 519200323",non-vulnerability-fixing commit
+2023-03-24 11:58:49,d711c16703c95511d21fb7df86d8b6c6b8e3b479,"Add special handling for Replicated Sharding with OTHER type.
+
+PiperOrigin-RevId: 519201526",non-vulnerability-fixing commit
+2023-03-24 12:01:08,793df04dca2ec5b096525ceb6c11c56d9bfe0067,"Reserve function name after signature_wrapper
+
+The function name will be used in graph generation as the function name. In current implementation, all functions in the graph will be named like `__inference_signature_wrapper_xxx` instead of the original function names. This change fixes it.
+
+It may be beneficial to use `tf_decorator.make_decorator`. But that also sets __wraps__ and caused other errors.
+
+PiperOrigin-RevId: 519201710",non-vulnerability-fixing commit
+2023-03-24 12:06:18,6143f7caa6f6c15a0361c161a6c15a96c5837654,"Update a neglected distribute_lib reference to the _from_proto_fn function that was moved to variable_scope.
+
+PiperOrigin-RevId: 519202790",non-vulnerability-fixing commit
+2023-03-24 12:10:12,0e2077363049f3d242ccff3e203c7d0ad4572c1d,"Update some isinstance checks of `tf.compat.v1.Variable` to `tf.compat.v2.Variable`.
+
+Also fix calls to the deprecated Variable.initialized_value implementation by directly copying it to the use cases.
+
+These changes are in preparation for changing `tensorflow/python/ops/resource_variable_ops.BaseResourceVariable` to inherit from `tensorflow/python/ops/variables.Variable` instead of `tensorflow/python/ops/variables.VariableV1`.
+
+Since `tensorflow/python/ops/variables.VariableV1` inherits from `tensorflow/python/ops/variables.Variable`, these changes are backwards compatible.
+
+PiperOrigin-RevId: 519203847",non-vulnerability-fixing commit
+2023-03-24 12:33:46,753ff6b72b07839984dc42006b943ac677e29ab9,"Split large target and remove unused glob target in autograph/pyct.
+
+Also, remove unused glob from autograph/pyct/common_transformer.
+
+PiperOrigin-RevId: 519210637",non-vulnerability-fixing commit
+2023-03-24 12:37:48,447a0edabd172510666e485611302a7def0b40be,"Boilerplate code to add new parameter to use HLO importer when legalizing with
+TF2XLA
+
+PiperOrigin-RevId: 519210788",non-vulnerability-fixing commit
+2023-03-24 13:05:09,aa6cedf8f4bd5af08bfb64579ebdd17c71936cb0,"Have the converter throw an error if there exists a `StatefulPartitionedCall` op  in the final IR. These are not supported. Update `converter_error_data` proto to add a new error message for this case.
+
+PiperOrigin-RevId: 519217367",non-vulnerability-fixing commit
+2023-03-24 13:14:24,03538e0414a5d913f496660bca2451b6236b02b7,"Integrate LLVM at llvm/llvm-project@410a23999672
+
+Updates LLVM usage to match
+[410a23999672](https://github.com/llvm/llvm-project/commit/410a23999672)
+
+PiperOrigin-RevId: 519218237",non-vulnerability-fixing commit
+2023-03-24 13:29:24,67bbea3b5ece8bf43769720aaa2e445247274650,"Internal change
+
+PiperOrigin-RevId: 519223181",non-vulnerability-fixing commit
+2023-03-24 13:39:04,4ddd275d167c33fcfd4cb651a4fa8040b342eef4,"Fix various test breakages in lite
+
+PiperOrigin-RevId: 519225475",non-vulnerability-fixing commit
+2023-03-24 13:47:24,cc6927ef94ac956aadf57a59cbb3f364e7d2a4f0,"Clarify some constants
+
+Where possible, replace them with symbolic expressions or use binary notation to make hex patterns more clear.
+
+PiperOrigin-RevId: 519227416",non-vulnerability-fixing commit
+2023-03-24 13:51:07,3cb846c523d6a3b1bdbf19a785c2f3c63ce05a4b,"Skip invariant hoisting for XlaLaunch functions. Those MLIR functions are not used at and after this point and so there is no point in hoisting them.
+
+PiperOrigin-RevId: 519228569",non-vulnerability-fixing commit
+2023-03-24 13:55:21,667081b1c3d84c8fee4b5965d5e151158c74d4f8,"Remove the `Status(tsl::error::Code, ...)` constructor.
+
+PiperOrigin-RevId: 519229466",non-vulnerability-fixing commit
+2023-03-24 14:00:34,ab047db8f98ecd9dca75046da355803031b7a8b6,"Ignore potential errors.
+
+PiperOrigin-RevId: 519230563",non-vulnerability-fixing commit
+2023-03-24 14:10:10,894fd9f6dca5aa785cf8eeb661b3f31f8bcdbaeb,"Disable tests failing due to flatbuffer version
+
+PiperOrigin-RevId: 519233337",non-vulnerability-fixing commit
+2023-03-24 15:00:06,9a373acfd4bb9a68a1d6290924516e17f488054b,"[xla:gpu] Support capturing device-to-device gpu.memcpy in CUDA graphs
+
+PiperOrigin-RevId: 519245400",non-vulnerability-fixing commit
+2023-03-24 15:05:01,48abc8ee20876d1a159bbb836e09135664118e44,"Annotate Iterator::GetNext with activity watcher.
+
+This might provide useful information for dataset deadlock debugging.
+
+PiperOrigin-RevId: 519245937",non-vulnerability-fixing commit
+2023-03-24 15:08:34,128817f4c2b34f15bbcbfec33d3080f35b57bd00,"[xla:cpu:next] runtime_mlir_utils: add public visibility
+
+PiperOrigin-RevId: 519246075",non-vulnerability-fixing commit
+2023-03-24 15:12:59,9cdaacd9bc6729d67c6a77ee3e882bf382dcf61f,"Add nested control flow support to DarwiNN online compilation.
+
+PiperOrigin-RevId: 519246796",non-vulnerability-fixing commit
+2023-03-24 15:28:08,2b25cae667119993b062cf6f39be407ff24dcd2e,"Create package for transforms
+
+PiperOrigin-RevId: 519251712",non-vulnerability-fixing commit
+2023-03-24 15:59:38,52e67a8647522394910f79228df294461950240b,"Pass in explicit parameter which was secretly being set to false
+
+PiperOrigin-RevId: 519258791",non-vulnerability-fixing commit
+2023-03-24 16:14:36,67e35ca5f62cd3ee1689cc97f5cc78ec0e852bf5,"Re-enable test cases for extension type field with tuple type annotation.
+
+The Python tuple supports subscripting since 3.9. Before TF drops Python < 3.9, use typing.Tuple instead of tuple for testing.
+
+PiperOrigin-RevId: 519262081",non-vulnerability-fixing commit
+2023-03-24 16:50:26,f4a32a28685b3970b5d19cf6b7656780720d2ac1,"[xla:runtime] Adds a test that illustrates running XLA runtime executable with async inputs and outputs.
+
+This changes also fixes a previous TODO where the lifetime of the callback for extracting async value was not fully extended to when the extraction really happens in a worker thread.
+
+PiperOrigin-RevId: 519269093",non-vulnerability-fixing commit
+2023-03-24 17:15:47,ab50b799a7a47e5f2f40f4ba644e510351fb79eb,"Record optimization duration in OptimizedFunctionGraphInfo proto and add a field to indicate where the proto is created.
+
+PiperOrigin-RevId: 519273839",non-vulnerability-fixing commit
+2023-03-24 17:37:22,392a9af712bf64e6b3a5e027a0a378aa2dad4823,"Handle a case in auto-sharding where a get-tuple-element instruction has a user annotated sharding. In this case, before this fix, the resharding costs for the tuple-typed operand would not have the correct length, leading to crash further into the pass.
+
+PiperOrigin-RevId: 519277218",non-vulnerability-fixing commit
+2023-03-24 18:04:05,40e25fe4bf8849d8d792441b6c15cd574a16dc54,"Link to documentation for TFLite Java Interpreter API for scalar String outputs for more clarity.
+
+PiperOrigin-RevId: 519281206",non-vulnerability-fixing commit
+2023-03-24 18:08:57,bd70c12efd2d4877756559a16decbdc01448273c,"Made the last non-variable test pass by filling the correct TPU IDs.
+
+PiperOrigin-RevId: 519282065",non-vulnerability-fixing commit
+2023-03-24 18:39:45,7f4c304eb2c67d278fdf440d6c6e0e7ea9112969,"[PJRT:C] Retrieve and return C API callback error message to the caller.
+
+PiperOrigin-RevId: 519286815",non-vulnerability-fixing commit
+2023-03-24 18:43:50,39ad9fcc008a14d294a1b1c8f83c9dbde7cbbe2c,"Record optimization duration in OptimizedFunctionGraphInfo proto and add a field to indicate where the proto is created.
+
+PiperOrigin-RevId: 519286840",non-vulnerability-fixing commit
+2023-03-24 23:08:08,dd91a9478f6a900d2e6df2ac6114c180e7086726,"Reverts a small part of cl/518773452 to attempt to fix OSS build failures
+
+PiperOrigin-RevId: 519324205",non-vulnerability-fixing commit
+2023-03-24 23:34:48,efb927d4428ed64c09c9dff00e201da84be97ad5,"[XLA] Rework HLO graph dump colors.
+
+- Make all elementwise ops white rather than yellow.  Elementwise ops are the
+  most common ops, so they should be de-emphasized.
+
+- Having reclaimed yellow, now use it for broadcast, instead of green.  IMO
+  after white, yellow is the least arresting color we have.
+
+- Having reclaimed green, use it for data-transformation ops like transpose and
+  reshape.  Previously these were white, which was misleading, as these are
+  often the most important ops inside a fusion.
+
+- Include kReducePrecision as an elementwise op.  It's not special, and indeed
+  kConvert is pretty similar and is already considered ""vanilla elementwise"".
+
+- Make gather purple, the same color as scatter, instead of white.  Although
+  gather isn't a reduction, it should go with scatter, and it's very
+  significant when it appears (i.e. it's often slow).
+
+- Make the border around kWhite nodes gray rather than black, to de-emphasize
+  these nodes a bit.
+
+PiperOrigin-RevId: 519328364",non-vulnerability-fixing commit
+2023-03-25 00:56:29,105cd0b4f094c6475147f4f6f1a43c84cdc7f0f9,"Use tflite_linkopts_no_undefined() rather than hard-coding ""-z defs"".
+
+PiperOrigin-RevId: 519338457",non-vulnerability-fixing commit
+2023-03-25 06:43:03,8de1ac396d573a9ee4b7aaea6f8acf78ffdb4edd,"[XLA:CPU Next] Merge transform_matmul and transform_dot.
+
+PiperOrigin-RevId: 519373791",non-vulnerability-fixing commit
+2023-03-25 09:44:13,bcd2cfa5c436c23922dbd699035fb3d85970ef40,"[XLA:CPU Next] Remove the patterns for scf.forall canonicalization.
+
+The patterns were upstreamed in https://reviews.llvm.org/D145368, https://reviews.llvm.org/D146558
+
+PiperOrigin-RevId: 519390311",non-vulnerability-fixing commit
+2023-03-25 10:18:26,51e9503016be7189d1ca7139787013df2988dbdd,"Do use the result of `tsl::Status::ok()`.
+
+PiperOrigin-RevId: 519393403",non-vulnerability-fixing commit
+2023-03-25 10:32:29,1057ad694db18434b631cdca659803afd34447dc,"Make Uniquefy algorithm stable in TFLite GraphInfo tool.
+
+TFLite Delegate interface doesn't really guarantee the order of
+inputs / outputs. This is for working around some issues that
+relies on the order of the inputs and outputs. However the behavior
+should not be relied on, in theory.
+
+The code path should be already well covered by the existing tests.
+As described above, flipping the inputs/outputs orders in the test
+cases should not affect anything.
+
+PiperOrigin-RevId: 519394703",non-vulnerability-fixing commit
+2023-03-26 07:35:07,3acbade512f414834bc91729c85193092822d3de,"Merge pull request #60095 from tatwaichong:tosa-fix-resize-scale_d
+
+PiperOrigin-RevId: 519521822",non-vulnerability-fixing commit
+2023-03-26 08:13:37,4d5048349e9e517cd19f6e06869437bec269fb5b,"Move usages of `python/util:util` to the newly split up targets.
+
+PiperOrigin-RevId: 519525743",non-vulnerability-fixing commit
+2023-03-26 08:52:01,f8abe4265012296e09811ae469ce817f4f802f1e,"#tf-data Add a call to notify waiting threads after restoring from a checkpoint.
+
+PiperOrigin-RevId: 519529419",non-vulnerability-fixing commit
+2023-03-26 09:58:07,1dce1ddd62b4d9f7434bffa347defe0ad286bfab,"Propagate graph rewrite options from model server flags to tfrt SavedModel API.
+
+PiperOrigin-RevId: 519535644",non-vulnerability-fixing commit
