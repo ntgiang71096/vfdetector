@@ -4,16 +4,16 @@
 
 Here is a tool for automatically listening to github repos and analyze each commit in real-time to identify whether it is relevant to vulnerability-fixing.
 
-To run this tool, you need to first set the appropriate environment variables as described in the second section of the tool's documentation. Then, you can provide the GitHub repository link and the desired listening period as inputs to the Python script.To run this tool, you should set the environment of VulCurator as shown in second Section, and then give the github repo link and listening period into:
+To run this tool, you need to first set the appropriate environment variables as described in the second section of the tool's documentation. Then, you can provide the GitHub repository link and the desired listening period as inputs to the below Python script:
 
 ```
-Listen_Repos/init.py
+Listen_Repos/init.py -link [Github URL] -listenperiod [listening period in terms of seconds]
 ```
 
-and then simply run this script. The newly generated commits as well as their classification results are stored at the local databases and txt files. 
+and then simply run this script. The newly generated commits as well as their classification results are stored in the local databases and txt files. 
 
 
-The tool uses the GitHub API to fetch information about the newly published commits (i.e., commit hash, commit message, code changes, and time of commit). It then applies VulCurator algorithm to determine whether each commit is likely to contain vulnerability fixes. Each data as well as the classification results are stored at the local databases and txt files. If a commit is identified as relevant, the tool allows trigger further actions, such as notifying a security team or creating an issue in a vulnerability tracking system (still working on it).
+The tool uses the GitHub API to fetch information about the newly published commits (i.e., commit hash, commit message, code changes, and time of commit). It then applies VulCurator algorithm to determine whether each commit is likely to contain vulnerability fixes. Each data as well as the classification results are stored in the local databases and txt files. If a commit is identified as relevant, the tool allows triggering further actions, such as notifying a security team or creating an issue in a vulnerability tracking system (still working on it).
 
 
 # Setting VulCurator
